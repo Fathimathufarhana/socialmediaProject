@@ -10,6 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Favorite, ChatBubbleOutline, Share } from '@mui/icons-material';
+import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
+
 import axios from 'axios';
 import { getUserById } from '../../../service/apiService';
 import { successToast } from '../../../Toast/Toast';
@@ -17,6 +19,9 @@ import UserProfile from '../UserProfile';
 import Header from "../../../components/common/Header"
 import FriendList from '../FrienList';
 import PostData from '../PostData';
+import { WhatsappShareButton } from 'react-share';
+import { Link } from 'react-router-dom';
+
 
 
 
@@ -24,6 +29,7 @@ const Myposts = () => {
   const [posts, setPosts] = useState([]);
   const [userData, setUserData] = useState({});
   const [commentInput, setCommentInput] = useState('');
+  const [privacy, setPrivacy] =useState('false');
   const [showComments, setShowComments] = useState(false);
   // console.log(posts, "postssss");
   // console.log(post,"post");
@@ -69,16 +75,47 @@ const Myposts = () => {
     setCommentInput(event.target.value);
   };
 
-  const handlePostComment = (postIndex) => {
-    // Add logic to post the comment to the corresponding post
-    // For now, we'll just log the comment to the console
-    console.log(`Comment posted on post ${postIndex + 1}: ${commentInput}`);
-    // Clear the comment input
+  const handlePostComment = async (postid) => {
+   
+    try {
+      
+      const userid = localStorage.getItem('id');
+      console.log(userid,"userId");
+      
+      if (!userid) {
+        console.error('userid not found');
+        return;
+      }
+// if(!text){
+//   console.error('text is required');
+// }
+      const response = await axios.post(`http://localhost:4002/posts/${postid}/comments`, { userid, text:commentInput})
+
+      console.log(response.data.comments, 'comment response')
+
+
+      successToast("comment posted");
+      fetchPosts()
+      // getComments(postid);
+    } catch (error) {
+      console.error('Error in post comment:', error.message);
+      errorToast("Failed to Post Comment")
+    }
     setCommentInput('');
   };
 
   
+ const handlePrivacyChange = async (event) => {
+setPrivacy(event.target.value)
+ }
   
+const handleUpdatePost= async (postid) => {
+  const response = await axios.put(`http://localhost:4002/posts/put/${postid}`,{
+    privacy,postid
+  })
+  console.log(response.data,"privacy updated");
+}
+
   const handleLikeIconClick = async (postid) => {
     console.log(`${postid},'post'`);
     
@@ -115,7 +152,12 @@ const Myposts = () => {
       <CssBaseline />
       <Container maxWidth="md" style={{ marginTop: '-20.5rem', flexGrow: 1 }}>
         <Grid container spacing={3}>
-          {posts.map((post) => (
+          {posts.map((post) => {
+            // console.log(post,"postsssssssss");
+            const shareUrl = `http://localhost:4002/posts/myposts/${localStorage.getItem("id")}`;
+            console.log(shareUrl,'url');
+            const shareText = `Check out this post: ${post.description}`;;
+          return(
             <Grid item key={post._id} xs={12}>
               <Paper elevation={3} style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -123,6 +165,26 @@ const Myposts = () => {
                   <Typography variant="subtitle1" style={{ marginLeft: '8px' }}>
                     {userData.firstname} {userData.lastname}
                   </Typography>
+                <div className="">
+                <select
+              name=""
+              id=""
+              onChange={handlePrivacyChange}
+              onClick={() => handleUpdatePost(post._id)}
+              value={privacy}
+              style={{ 
+                marginLeft: '39rem',
+                backgroundColor: 'transparent',
+                borderColor:'#2196F3',
+                boxShadow:"1px 1px 2px",
+                padding:"1px 3px 1px 1px",
+                borderRadius:"3px"
+              }}
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+                </div>
                 </div>
                 <div style={{ marginTop: '8px' }}>
                   <Typography variant="caption" color="textSecondary">18 dec 2023</Typography>
@@ -147,12 +209,15 @@ const Myposts = () => {
                       <ChatBubbleOutline />
                     </IconButton>
                     <Typography variant="body2" style={{ marginTop: '10px' }} >
-                      1 Comments
+                    {post.comments.length}  Comments
                     </Typography>
                   </div>
                   <div style={{ display: 'flex' }}>
                     <IconButton color="primary">
+                    <Link to={`share/${post._id}`}><WhatsappShareButton url={shareUrl} title={shareText} >
                       <Share />
+                      </WhatsappShareButton>
+                </Link>
                     </IconButton>
                   </div>
                 </div>
@@ -161,15 +226,31 @@ const Myposts = () => {
                     {/* Display comments */}
                     <Typography variant="subtitle2">Comments</Typography>
 
-                    {/* {post.comments.map((comment, commentIndex) => ( */}
-                    <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
-                      <Avatar src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPfO37MK81JIyR1ptwqr_vYO3w4VR-iC2wqQ&usqp=CAU"} />
-                      <div style={{ marginLeft: '8px' }}>
-                        <Typography variant="subtitle2">userName</Typography>
-                        <Typography variant="body2">BEAUTIFUL IMAGE</Typography>
-                        <Typography variant="caption" color="textSecondary">2 min ago</Typography>
+                    {post.comments.map((comment) => (
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
+                        {/* <Avatar src={`http://localhost:4002/uploads/${comment.userid}/profilePicture`} /> */}
+                  <Avatar src={`http://localhost:4002/uploads/${comment.profilePicture}`} />
+
+                        <div style={{ marginLeft: '8px' }}>
+                          <Typography variant="subtitle2">{comment.firstname} {comment.lastname}</Typography>
+                          <Typography variant="body2">{comment.text}</Typography>
+                          {/* {comment.timestamp && (
+                            <Typography variant="caption" color="textSecondary">{comment.timestamp}</Typography>
+                          )} */}
+                          {/* Add a timestamp if available in your comment data */}
+                        </div>
                       </div>
-                    </div>
+                    ))}
+
+
+                  {/* <div>
+                  <h2>Comments:</h2>
+                  <ul>
+                    {comments.map((comment, index) => (
+                      <li key={index}>{`${comment.userid}: ${comment.text}`}</li>
+                    ))}
+                  </ul>
+                </div> */}
 
                     {/* )} */}
 
@@ -184,22 +265,23 @@ const Myposts = () => {
                       value={commentInput}
                       onChange={handleCommentInputChange}
                     />
-                    <IconButton color="primary" onClick={() => handlePostComment(postIndex)}>
-                      <ChatBubbleOutline />
+                    <IconButton color="primary" onClick={() => handlePostComment(post._id)}>
+                      <SendTwoToneIcon />
+                      {/* <ChatBubbleOutline/> */}
                     </IconButton>
                   </div>
                 )}
               </Paper>
             </Grid>
-          ))}
+          )})}
         </Grid>
       </Container>
       <div><FriendList/></div> 
 
       </div>
-    //   {/* <Footer /> */}
+      {/* <Footer /> */}
 
-    // </div>
+     </div>
   );
 };
 

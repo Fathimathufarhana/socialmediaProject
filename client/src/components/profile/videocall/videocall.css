@@ -1,0 +1,20 @@
+/* CameraComponent.css */
+
+.camera-container {
+    position: relative;
+    object-fit: cover;
+    align-items: center;
+    margin: 5rem 0rem;
+    /* margin-left: 28rem; */
+  }
+  
+  .button-container {
+    position: absolute;
+    bottom: 16px;
+    left: 14rem;
+    display: flex;
+    gap: 15px;
+    /* display: flex; */
+    /* align-items: center; */
+  }
+  

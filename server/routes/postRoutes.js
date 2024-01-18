@@ -1,7 +1,7 @@
 
 import express from "express"
 // import { commentPost, createPost, getAllPosts, likePost } from "../controllers/postController.js"
-import { createPost, getAllPosts, getComment, getPost, likePost, postComment} from "../controllers/postController.js"
+import { addFriend, createPost, getAllPosts, getComment, getPost, likePost, postComment, updatedPost} from "../controllers/postController.js"
 import multer from "multer";
 import path from "path"
 
@@ -28,6 +28,9 @@ router.get("/myposts/:id",getPost)
 router.post("/like", likePost)
 router.post('/:postId/comments',postComment)
 router.get('/:postId/comments',getComment)
+router.post('/addfriend', addFriend);
+router.put('/put/:id',updatedPost)
+// router.get('/getfriend')
 // router.put("/:id/comment", verifyToken, commentPost)
 
 export default router

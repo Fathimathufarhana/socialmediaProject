@@ -74,6 +74,7 @@ export default function SignIn() {
     }
    } catch (error) {
     console.log(error.message,"error in fetching API");
+    errorToast(error.response.data.message)
    }
 
   };

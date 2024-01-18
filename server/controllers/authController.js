@@ -1,13 +1,15 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer"
+import UserOTPverification from "../models/UserOTPverification.js";
 
 
 export const register =async (req, res)=> {
 
     try {
       
-      const { firstname, lastname, email, password} = req.body
+      const { firstname, lastname, email, password, privacy} = req.body
       console.log(req.body);
       
       // firstname email
@@ -37,12 +39,13 @@ export const register =async (req, res)=> {
   }
   const profilePicture=req.file.filename
   // console.log(profilePicture,"profile");
+  const isPublic = privacy === "public";
 
   const saltRounds = 10;
   
   const salt = bcrypt.genSaltSync(saltRounds);
   const hash = bcrypt.hashSync(password, salt);
-  const newUser = new User({ firstname, lastname, email, password: hash, profilePicture:profilePicture });
+  const newUser = new User({ firstname, lastname, email, password: hash, profilePicture:profilePicture ,privacy: isPublic ,verified:false});
   const savedUser = await newUser.save();
   res.status(200).json(savedUser);
   console.log(savedUser,"user");
@@ -51,6 +54,61 @@ export const register =async (req, res)=> {
        console.log(error.message); 
     }
 }
+
+
+
+
+
+
+
+
+//send otp verification emil
+const sendOTPverficationEmail= async ({ _id,email}, res) => {
+  try {
+    const otp = `${Math.floor(1000 + Math.random() * 9000)}`
+
+    const mailOptions = {
+      from: process.env.AUTH_EMAIL,
+      to: email,
+      subject: "Verify Your Email",
+      html: `<p>Enter <b>${otp}</b> in the app to verify your email address and complete the registration </p><p>`,
+
+    }
+  } catch (error) {
+    
+  }
+}
+
+
+let transporter = nodemailer.createTransport({
+
+  host: "smtp-mail.outlook.com",
+  auth: {
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASS,
+  }
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -94,13 +152,60 @@ export const login = async (req, res) => {
     const { id } = req.params
     try {
       let getUser=await User.findById(id)
-      res.status(201).json(getUser)
+      const {...others} = getUser._doc
+
+// console.log(getUser,"kkkkk");
+ let user=getUser.friendlist.map(async(item)=>{
+// console.log(item,"item");
+let getUserr=await User.findById(item)
+// console.log(item,"");
+const {...others } = getUserr._doc
+// console.log(getUser,"getuser");
+return others
+})
+
+
+
+const result = await Promise.all(user)
+others.followers = result
+
+
+// console.log(others,'others');
+
+
+
+
+// return true
+
+      res.status(201).json(others)
     } catch (error) {
       res.status(404).json({message:error.message || null});
       
     }
   }
 
+
+
+  
+  export const updatedPrivacy=async(req,res)=>{
+ 
+    // const { privacy,postid } = req.body;
+    console.log(req.body,'bodyyy')
+
+    // let privacy = req.body.data === 'public' ? true : false 
+let privacy = req.body.data === "public" ? false : true
+console.log(privacy,"updated privacy");
+  // return true
+    try {
+      const updatedPost = await User.findByIdAndUpdate(req.body.postid,{ $set:{privacy:privacy} });
+      
+  
+      res.json(updatedPost);
+    } catch (error) {
+      console.error('Error updating post privacy:', error.message);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 
   
 export const updateUser = async(req,res) => {

@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllUser, getUser, login, register, updateUser } from "../controllers/authController.js";
+import { getAllUser, getUser, login, register, updateUser, updatedPrivacy } from "../controllers/authController.js";
 import multer from "multer";
 import path from "path"
 
@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
   router.get('/getdata', getAllUser);
   
   router.put("/updateuser/:id",upload.single('profilePicture'),updateUser)
-
+  router.put("/privacy", updatedPrivacy)
 
 
 

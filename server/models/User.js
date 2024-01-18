@@ -22,7 +22,16 @@ const UserSchema = new Schema({
     profilePicture:{
         type:String,
         required:true
-    }
+    },
+    friendlist:{
+        type:Array,
+        default:[]
+    },
+    privacy: {
+        type: Boolean,
+        default: true, 
+    },
+    // verified:Boolean
 },{ timestamps: true })
 
 const User = model("User", UserSchema);

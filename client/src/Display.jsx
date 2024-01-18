@@ -31,7 +31,7 @@ const Display = () => {
       {/* <UserProfile data={user}/> */}
       <div >
         <PostData />
-        <FriendList />
+        {/* <FriendList followers={followers}/> */}
 
         {/* <ViewPost/> */}
       </div>

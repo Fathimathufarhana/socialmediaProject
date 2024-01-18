@@ -17,6 +17,10 @@ import { useState } from 'react';
 import axios from "axios"
 import { errorToast, successToast } from "../../Toast/Toast.jsx"
 
+import { signInWithPopup } from 'firebase/auth';
+import { provider ,auth} from '../profile/otp/firebase.config.js';
+// import { auth } from './googleSignin/firebase.config.js';
+
 // function Copyright(props) {
 //   return (
 //     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -39,20 +43,22 @@ export default function SignUp() {
   const navigate = useNavigate()
 
   const [formData,setFormData] = useState({
-    email:"",
-firstname:"",
-lastname:"",
-password:""
+    email: "",
+firstname: "",
+lastname: "",
+password: "",
+privacy: "public"
   })
 
   // const [email,setEmail] =useState(null);
   // const [firstname, setFirstname] = useState(null);
   // const [lastname, setLastname] = useState(null);
-  // const [password,setPassword] = useState(null);
+  const [user,setUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureName, setProfilePictureName] = useState('');
   const [stateError,setStateError] = useState(false)
   const [message, setMessage] = useState(false)
+  const [isToggled, setIsToggled] = useState(false)
   
 
 
@@ -127,14 +133,16 @@ const handleInputChange= (e) =>{
       formDataToSend.append('email', formData.email);
       formDataToSend.append('password', formData.password);
       formDataToSend.append('profilePicture', profilePicture);
+      formDataToSend.append("privacy", isToggled ? "public" : "private");
+
       
       const response = await axios.post('http://localhost:4002/api/user/register', formDataToSend);
       console.log(formDataToSend,"formdataa");
 
       if (response.data) {
         console.log(response.data,"response");
-        successToast("success");
-        navigate('/');
+        successToast("Registered Successfully!");
+        navigate('/otp');
       } else {
         console.error("Error while registering user:", response.data.message);
         errorToast(response.data.message);
@@ -146,7 +154,27 @@ const handleInputChange= (e) =>{
   };
 
 
+  const handleClickToggle =() => {
+    setIsToggled(!isToggled)
+    console.log(isToggled,"privacy");
+  }
 
+
+  const signinGoogle = () => {
+    // navigate('/googleSignin')
+    signInWithPopup(auth, provider).then((result)=>{
+      const user = result.user;
+      console.log(user);
+      navigate('/home')
+      setUser(user);
+    }).catch((err)=>{
+      console.log(err);
+    })
+  }
+
+  // const handleLogout=()=>{
+  //   setUser(null);
+  // }
 
 
   return (
@@ -228,6 +256,28 @@ const handleInputChange= (e) =>{
               {stateError && formData.password &&( <p style={{ color: "red" }}>Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and one special character.</p>)}
               </Grid>
 
+              <Grid>
+              <select
+                  required
+                  fullWidth
+                  name="privacy"
+                  label="Privacy"
+                  // type="password"
+                  value={isToggled? "public" : "private"}
+                  onChange={handleClickToggle}
+                  id="privacy"
+                  autoComplete="privacy"
+                >
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+
+                  </select>
+                  </Grid>
+
+              {/* <Grid>
+
+              </Grid> */}
+
               <Grid item xs={12}>
           <input
             accept="image/*"
@@ -267,6 +317,19 @@ const handleInputChange= (e) =>{
             >
               Sign Up
             </Button>
+            <Button
+  onClick={signinGoogle}
+  fullWidth
+  variant="contained"
+  style={{ backgroundColor: '#d9534f' }}
+  sx={{ mt: 3, mb: 2 }}
+>
+  Sign In with Google
+</Button>
+
+
+
+
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/" variant="body2">

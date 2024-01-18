@@ -1,35 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { getUserById } from '../../service/apiService';
+import FriendList from './FrienList';
+import { AuthContext } from '../../context/AuthContext';
+// import VideoCall from './VideoCall';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const UserProfile = () => {
+  
+  const {refresh} = useContext(AuthContext)
+  const { selectedPost } = useContext(AuthContext);
 
+
+  const [datas,setDatas]=useState([])
+  console.log(datas,"datas");
   const [userData, setUserData] = useState({});
-  // console.log(userData,"userdata in userProfile");
+  console.log(userData,"userdata in userProfile");
+  // console.log(userData.followers.length,"userData.followers.lenght");
   // console.log(userData.profilePicture,"profilepictureee");
 
   const fetchData = async () => {
+    let response;
+    // console.log(response,'kkkkkkkkkkkkkkkkkkkkkkkk');
+    if (selectedPost) {
+      response = selectedPost;
+      console.log(response,'selectedpost');
+    } else {
     try {
-      const response = await getUserById();
-      setUserData(response);
-      console.log(response, 'response');
+       response = await getUserById();
     } catch (error) {
       console.error('Error fetching user data:', error);
-      // Handle error, show an error message, etc.
     }
-  };
+  }
+  setUserData(response);
+  console.log(response, 'response');
+};
 
+
+const getPost=async(req,res)=>{
+  try {
+    let response=await axios.get(`http://localhost:4002/posts/myposts/${localStorage.getItem("id")}`)
+    console.log(response,"res");
+    setDatas(response.data)
+    
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
+
+// console.log(getPost,"getpost");
   useEffect(() => {
     fetchData();
-  }, []);
+    getPost()
+  }, [refresh, selectedPost]);
 
   const handleFollowClick = () => {
     // Add logic for handling follow action
     console.log(`User ${userData.firstname} followed`);
   };
+
+  const handleVideoClick = () => {
+    // window.open(userData.videoLink, '_blank')
+    // alert("Comming Soon")
+    // <VideoCall/>
+
+  }
 
   const handleMessageClick = () => {
     // Add logic for handling message action
@@ -44,7 +84,9 @@ const UserProfile = () => {
   return (
 
     <>
+    <div className=''>
     {/* <h1>hhhhhhhhhhh</h1> */}
+    <div>
     <Grid container
      style={{ marginTop: '5.5rem',maxWidth:"94rem" }}
     //  style={{ marginTop: '10rem' }}
@@ -71,7 +113,7 @@ const UserProfile = () => {
           <Grid container mt={4}>
             <Grid item xs={4}>
               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                5
+              {datas?.length}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Posts
@@ -79,7 +121,7 @@ const UserProfile = () => {
             </Grid>
             <Grid item xs={4}>
               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                555
+                98
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Followers
@@ -87,7 +129,8 @@ const UserProfile = () => {
             </Grid>
             <Grid item xs={4}>
               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                55
+              {userData.followers.length}
+
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Following
@@ -96,7 +139,7 @@ const UserProfile = () => {
           </Grid>
 
           <Grid mt={2} style={{ gap: '2.25rem', display: 'flex' }}>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <Button
                 variant="contained"
                 color="primary"
@@ -108,7 +151,7 @@ const UserProfile = () => {
               </Button>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <Button
                 variant="contained"
                 color="primary"
@@ -119,6 +162,21 @@ const UserProfile = () => {
                 Message
               </Button>
             </Grid>
+
+            <Grid item xs={4}>
+              {/* <Link to={'videoCall'}> */}
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={handleVideoClick}
+                fullWidth
+                component={Link} to="/videoCall"
+              >
+               videocall
+              </Button>
+              {/* </Link> */}
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -127,8 +185,16 @@ const UserProfile = () => {
       {/* <PostData/> */}
 
       {/* ... (your existing content) */}
-      {/* <FriendList/> */}
+      {/* <h1>jjjjjjjjjjjjjjjjjjjjjjjjjj</h1> */}
     </Grid>
+    </div>
+
+
+
+    <div>
+      <FriendList followers={userData.followers}/>
+    </div>
+    </div>
     </>
   );
 };

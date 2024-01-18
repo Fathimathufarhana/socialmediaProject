@@ -1,0 +1,162 @@
+/* GroupChat.css */
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    background-color: #1f2933; 
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  .chat-box {
+    max-width: 600px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logged-in-as {
+    color: #2b12cc;
+    margin-bottom: 15px;
+  }
+  
+ 
+.input-box {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .message-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+  }
+  
+  .input-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff; /* Adjust background color as needed */
+    padding: 10px;
+    /* box-shadow: 0px -1px 5px 0px rgba(0, 0, 0, 0.1); Add box shadow to create separation from the chat box */
+  }
+  
+  .send-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    color: #495057;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    /* cursor: pointer; */
+  }
+  
+  .send-button:hover {
+    background-color: #e9ecef;
+  }
+  
+
+  .logout-button {
+    background-color: #ffffff;
+    color: #495057;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .logout-button:hover {
+    background-color: #e9ecef;
+  }
+  
+  .sender-image,
+  .receiver-image {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  
+  .message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .message {
+    display: flex;
+    align-items: flex-start;
+    width: fit-content;
+  }
+  
+  .self-end {
+    justify-content: flex-end;
+    align-self: flex-end;
+  }
+  
+  .other-start {
+    justify-content: flex-start;
+    align-self: flex-start;
+  }
+  
+  .message-bubble {
+    max-width: 60%;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+  }
+  
+  .input-box {
+    display: flex;
+    justify-content: center;
+    bottom: 0;
+    margin-bottom: 25px;
+    /* position: fixed; */
+  }
+  
+  .input-container {
+    position: relative;
+    /* width: 100%; */
+    
+  }
+  
+  .message-input {
+    /* width: 90%; */
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    /* width: 35%; */
+
+  }
+  
+  .send-button {
+    margin-left: 10px;
+    
+
+}
+  
+  .self-message {
+    background-color: #128c7e;
+    color: #ffffff;
+    max-width: fit-content;
+  }
+  
+  .other-message {
+    background-color: #f1f0f0; 
+    color: #000000;
+  }
+  
+  

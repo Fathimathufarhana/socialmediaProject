@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, TextField, Button, Grid, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getUserById } from '../../../service/apiService';
 import axios from 'axios';
 
@@ -12,12 +12,25 @@ const EditProfile = () => {
   //   password: '',
   // });
   const [profilePicture, setImage] = useState("");
+  const [isToggled, setToggled] = useState(false);
   const [data, setData] = useState({
     firstname: '',
     lastname: '',
     email: '',
     password: '',
+    privacy: "public",
+
   });
+
+  const navigate = useNavigate()
+
+  const handleLogOut = ()=>{
+    setToggled(!isToggled)
+    localStorage.removeItem('token');
+    localStorage.removeItem('id');
+    localStorage.removeItem('username');
+    navigate('/')
+  }
 
   const fetchData = async () => {
     try {
@@ -49,6 +62,8 @@ const EditProfile = () => {
     formDataToSend.append('lastname', data.lastname);
     formDataToSend.append('email', data.email);
     formDataToSend.append('password', data.password);
+    formDataToSend.append("privacy", isToggled ? "public" : "private");
+
 
     // // Append the profile picture file to the FormData if it exists
     if (profilePicture) {
@@ -58,7 +73,7 @@ const EditProfile = () => {
     try {
       // Make an API request using axios (replace the URL with your API endpoint)
       const response = await axios.put(`http://localhost:4002/api/user/updateuser/${localStorage.getItem("id")}`, formDataToSend);
-console.log(response,"gdsyhb sdhhdghhhhhhhhhhh");
+      // console.log(response, "gdsyhb sdhhdghhhhhhhhhhh");
       // Handle the response from the server
       console.log('Server Response:', response.data);
 
@@ -68,6 +83,27 @@ console.log(response,"gdsyhb sdhhdghhhhhhhhhhh");
       // Handle errors (show an error message, etc.)
     }
   };
+
+  // const handlePrivacy
+  const handlePrivacy = async(postid,value)=>{
+    // alert(e.target.value)
+    setToggled(!isToggled);
+
+    // if(value === '') return alert('plese click anyone')
+    try {
+      console.log("handlePrivacy");
+      // await axios.put('http://localhost:4002/api/user/privacy',{postid,data:value})
+    let response=  await axios.put('http://localhost:4002/api/user/privacy',{postid,data:value})
+      console.log(response,"privacy updated");
+    } catch (error) {
+      console.error(error.message,"error in handlePrivacy");
+    }
+  }
+
+  const handleClickToggle = () => {
+    setToggled(!isToggled);
+  };
+
 
 
   return (
@@ -126,6 +162,27 @@ console.log(response,"gdsyhb sdhhdghhhhhhhhhhh");
               onChange={handleChange}
             />
           </Grid>
+          <Grid>
+            <select
+              required
+              fullWidth
+              name="privacy"
+              label="Privacy"
+              // type="password"
+              value={isToggled ? "public" : "private"}
+              onChange={(e) => handlePrivacy(data._id, e.target.value)}
+              id="privacy"
+              autoComplete="privacy"
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+
+            </select>
+          </Grid>
+
+
+
+
           <Grid item xs={12}>
             <input
               accept="image/*"
@@ -156,6 +213,7 @@ console.log(response,"gdsyhb sdhhdghhhhhhhhhhh");
             to="/"
             variant="contained"
             color="primary"
+            onClick={handleLogOut}
             style={{ width: '48%' }}
           >
             Logout

@@ -5,6 +5,7 @@ export const getUserById = async () => {
     let response = await axios.get(
       `http://localhost:4002/api/user/${localStorage.getItem("id")}`
     );
+    // console.log(response,"response in apiservice");
     // console.log(response.data,"id vechitt kittnd");
     return response.data;
   } catch (error) {

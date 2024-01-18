@@ -47,7 +47,7 @@ function ResponsiveAppBar() {
             variant="h6"
             noWrap
             component={Link}
-            to="/"
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -58,7 +58,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            ECHOLINK
           </Typography>
 
           {/* Navigation for small screens */}
@@ -92,14 +92,17 @@ function ResponsiveAppBar() {
               //   display: { xs: 'block', md: 'none' },
               // }}
             >
-              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/products">
-                <Typography textAlign="center">Products</Typography>
+              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/home">
+                <Typography textAlign="center">Home</Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/pricing">
-                <Typography textAlign="center">Pricing</Typography>
+              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/myposts">
+                <Typography textAlign="center">My Posts</Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/blog">
-                <Typography textAlign="center">Blog</Typography>
+              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/videochat">
+                <Typography textAlign="center">Video Chat</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu} component={Link} to="/groupchat">
+                <Typography textAlign="center">Group Chat</Typography>
               </MenuItem>
             </Menu>
           </Box>
@@ -110,7 +113,7 @@ function ResponsiveAppBar() {
             variant="h5"
             noWrap
             component={Link}
-            to="/"
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -122,7 +125,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+              ECHOLINK
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center', alignItems: 'center' , gap:"2rem" }}>
   <Button onClick={handleCloseNavMenu} component={Link} to="/home" sx={{ my: 2, color: 'white', display: 'block' }}>
@@ -131,8 +134,11 @@ function ResponsiveAppBar() {
   <Button onClick={handleCloseNavMenu} component={Link} to="/myposts" sx={{ my: 2, color: 'white', display: 'block' }}>
     My Posts
   </Button>
-  <Button onClick={handleCloseNavMenu} component={Link} to="/blog" sx={{ my: 2, color: 'white', display: 'block' }}>
-    Blog
+  <Button onClick={handleCloseNavMenu} component={Link} to="/videochat" sx={{ my: 2, color: 'white', display: 'block' }}>
+    Video Chat
+  </Button>
+  <Button onClick={handleCloseNavMenu} component={Link} to="/groupchat" sx={{ my: 2, color: 'white', display: 'block' }}>
+    Group Chat
   </Button>
 </Box>
 
